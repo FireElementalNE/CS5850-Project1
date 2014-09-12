@@ -1,0 +1,1 @@
+moveRe = '^move (\d+\-\d+)$'
