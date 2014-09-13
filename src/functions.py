@@ -8,3 +8,4 @@ def clearScreen():
 		runCommandSimple('cls')
 	else:
 		runCommandSimple('clear')
+

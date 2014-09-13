@@ -14,6 +14,7 @@ def gameLoop(tickrate):
             m = re.match(moveRe,curCommand)
             print 'You wish to move to %s' % (m.group(1))
         elif curCommand == 'status':
+            
         elif curCommand == 'attack':
             print 'attack command'
         elif curCommand == 'quit':

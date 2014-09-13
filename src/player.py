@@ -1,4 +1,5 @@
-import world
-class player:
-	def __init__(self):
-		self.location = world.begin
+class Player:
+	def __init__(self,r):
+		self.location = r
+	def printLocation(self):
+		print self.location.id
