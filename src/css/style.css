@@ -1,0 +1,56 @@
+* {
+	padding : 0;
+	margin : 0;
+}
+div#title {
+	width : 100%;
+}
+div#title h1 {
+	font-size : 170%;
+}
+div#page {
+	margin-left : auto;
+	margin-right : auto;
+	width : 500px;
+	background-color : white;
+}
+div#client {
+	margin : -5px 0 0 0;
+	padding : 0 15px 15px 15px;
+	background-color : gray;
+}
+div#chatArea {
+	border : green solid 2px;
+	margin : 40px 0 0 0;
+	background-color : #bdbdbd;
+	height : 300px;
+	overflow : auto;
+}
+div#cbox {
+	margin-top : 5px;
+	height : 54px;
+	width : 473px;
+}
+input#chatMessege {
+	width : 410px;
+	height : 30px;
+}
+div#sendButton {
+	background-color : red;
+	height : 30px;
+	width : 50px;
+	margin-top: -54px;
+	float : right;
+}
+.disable-select {
+  -webkit-user-select: none;  
+  -moz-user-select: none;    
+  -ms-user-select: none;      
+  user-select: none;
+}
+.useroutput {
+	color : #CC0000;
+}
+.consoleoutput {
+	color : #669900;
+}
