@@ -23,13 +23,12 @@ var bed = {
 		return "Just a Normal Unmade Bed...";	
 	}
 }
-var terminalState = "off";
+
 var terminal = {
 	id: "CRK-150",
 	names: ["terminal","crk-150"],
 	location:"room1",
 	state: "off",
-	actions: ["turn on", "turn off"],
 	objfunction: function () {
 		return "Your custom CRK-150, outfitted to be one of the " +
 				"Fastest computer terminals on the market. It is " + this.state;	

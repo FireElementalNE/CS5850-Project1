@@ -56,9 +56,10 @@ function inArray(target,arr) {
 }
 
 function parseCommand(com) {
-	moveRe = /move\s(Room\d)/i;
+	moveRe = /move\s(\w+)/i;
 	adjRe = /list\sadjacent/i;
-	takeRe = /take\s(\w+)/i
+	takeRe = /take\s(\w+)/i;
+	lookRe = /look\s(\w+)/i;
 	switch(true) {
 		case moveRe.test(com): 
 			move(moveRe.exec(com)[1]);
@@ -66,8 +67,10 @@ function parseCommand(com) {
 		case adjRe.test(com): 
 			console.log("adj");
 			break;
+		case lookRe.test(com):
+			writeTextToOutput('console',findObject(lookRe.exec(com)[1]).objfunction());
 		case comInObjects(com) && !takeRe.test(com):
-			writeTextToOutput('console',findObject(com).objfunction());
+			console.log("room");
 			break;
 	}
 }
@@ -93,23 +96,32 @@ function ListAdj(cRoom) {
 
 }
 
+function log(msg) {
+	console.log(msg);
+}
+
 function move(dRoom) {
 	var found = false;
+	var tmp = undefined;
+	log("lol");
 	actualAdjRooms = player.currentRoom.adjacentRooms;
 	for(var i = 0; i < actualAdjRooms.length; i++) {
-		console.log('#' + actualAdjRooms[i] + ' ' + dRoom + '#');
-		if(dRoom == actualAdjRooms[i]) {
+		log(actualAdjRooms[i]);
+		if(dRoom == actualAdjRooms[i].transition) {
+			tmp = actualAdjRooms[i].id
 			found = true;
 			break;
 		}
 	}
 	if(found) {
-		var newRoom = findRoom(dRoom);
-		writeTextToOutput('console','Moving to \'' + dRoom + '\'.');
+		log(tmp);
+		var newRoom = findRoom(tmp);
+		writeTextToOutput('console','Moving to \'' + newRoom.name + '\'.');
+		writeTextToOutput('console',newRoom.description);
 		player.currentRoom = newRoom;
 	}
 	else {
-		writeTextToOutput('console','\'' + dRoom + '\' is not adjacent to \'' + player.currentRoom.id + '\'.');
+		writeTextToOutput('console','\'' + dRoom + '\' is not adjacent to \'' + player.currentRoom.name + '\'.');
 	}
 }
 
