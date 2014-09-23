@@ -13,7 +13,7 @@ var world = {
 				name: "Lobby Cyber",
 				description: "",
 				objects: ["a","b","c"],
-				adjacentRooms: ["room2"]
+				adjacentRooms: ["room1"]
 			}
 		]
 }

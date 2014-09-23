@@ -3,12 +3,9 @@ console.log("loaded");
 var player; 
 
 var counter = 0;
-$( document ).ready(function() {
-  player = {
-	"inventory": [],
-	"currentRoom":  world.rooms[0]
-	}
-});
+
+objects = new Array();
+
 
 function writeTextToOutput(type,msg) {
 	var writerClass = undefined;
@@ -31,9 +28,37 @@ function chomp(str) {
 	return str.replace(/(\n|\r|\s)+$/, '');
 }
 
+function findObject(id0) {
+	for(var i = 0; i < objects.length; i++) {
+		if(inArray(id0,objects[i].names) && objects[i].location == player.currentRoom.id) {
+			return objects[i];
+		}
+	}
+	return null;
+}
+
+function comInObjects(id0) {
+	for(var i = 0; i < objects.length; i++) {
+		if(inArray(id0,objects[i].names) && objects[i].location == player.currentRoom.id) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function inArray(target,arr) {
+	for(var i = 0; i < arr.length; i++) {
+		if(target == arr[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
 function parseCommand(com) {
 	moveRe = /move\s(Room\d)/i;
 	adjRe = /list\sadjacent/i;
+	takeRe = /take\s(\w+)/i
 	switch(true) {
 		case moveRe.test(com): 
 			move(moveRe.exec(com)[1]);
@@ -41,9 +66,11 @@ function parseCommand(com) {
 		case adjRe.test(com): 
 			console.log("adj");
 			break;
+		case comInObjects(com) && !takeRe.test(com):
+			writeTextToOutput('console',findObject(com).objfunction());
+			break;
 	}
 }
-
 
 function submitUserCommand() {
 	var data = $("#chatMessege").val();
@@ -85,6 +112,19 @@ function move(dRoom) {
 		writeTextToOutput('console','\'' + dRoom + '\' is not adjacent to \'' + player.currentRoom.id + '\'.');
 	}
 }
+
+$( document ).ready(function() {
+	player = {
+		"inventory": [],
+		"currentRoom":  world.rooms[0]
+	}
+	writeTextToOutput('console',player.currentRoom.description);
+	objects.push(clock);
+	objects.push(bed);
+	objects.push(terminal);
+
+});
+
 
 setInterval(function(){      
       counter++;
