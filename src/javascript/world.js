@@ -55,12 +55,30 @@ var world = {
 				description: "Upon using the russian icebreaker to get through that nasty ICE wall," +
 							" you find yorself in a giant room full of drawers, these drawers correspond to " +
 							" basic bank accounts, while these have money they are not what you are looking for." +
-							" There is a door in the back of the room, no ICE, seems suspicious.",
+							" There is a door to a backroom, no ICE, seems suspicious.",
 				objects: ["drawers"],
 				adjacentRooms: [
 							{ 
 								id: "room3",
 								transitions: ["cyberspace"] 
+							},
+							{ 
+								id: "room5",
+								transitions: ["backroom"] 
+							}
+						]
+			},
+			{
+				id: "room5",
+				name: "backroom",
+				description: "You knew it looked to good to be true, upon entering the room you are presented, with" +
+							" a military grade scanner module that you must use to continue... how the hell are you going to" +
+							" get past that?",
+				objects: ["scanner"],
+				adjacentRooms: [
+							{ 
+								id: "room4",
+								transitions: ["vault"] 
 							},
 						]
 			}

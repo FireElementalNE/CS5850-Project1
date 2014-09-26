@@ -220,12 +220,15 @@ $( document ).ready(function() {
 	objects.push(terminal);
 	objects.push(icebreaker);
 	objects.push(drawers);
+	objects.push(scanner);
 	parseCommand('move terminal');
 	parseCommand('move cyberspace');
 	parseCommand('look icebreaker');
 	parseCommand('take icebreaker');
 	parseCommand('inventory');
 	parseCommand('move vault');
+	parseCommand('move backroom');
+	parseCommand('look scanner');
 });
 
 
