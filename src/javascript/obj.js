@@ -48,3 +48,14 @@ var icebreaker = {
 		return "a russian military grade ice breaker you found in a local electronics shop, was pretty cheap.";
 	}
 }
+
+var drawers = {
+	id: "drawers",
+	names: ["drawers"],
+	location:"room4",
+	cantake:true,
+	inInv:false,
+	objfunction: function () {
+		return "Some basic bank accounts. You could crack them with ease but its not worth your time."; 
+	}
+}

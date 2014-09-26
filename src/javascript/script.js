@@ -161,6 +161,18 @@ function log(msg) {
 	console.log(msg);
 }
 
+function room3TO4(newRoom) {
+	if(newRoom.id == 'room4') {
+		if(inArray(icebreaker,player.inventory)) {
+			writeTextToOutput('console','You use the icebreaker to enter the vault!');			
+			return true;
+		}
+		writeTextToOutput('console','You can\'t get through that ice! where that icebreaker?');			
+		return false;
+	}
+	return true;
+}
+
 function move(dRoom) {
 	var found = false;
 	var tmp = undefined;
@@ -174,9 +186,11 @@ function move(dRoom) {
 	}
 	if(found) {
 		var newRoom = findRoom(tmp);
-		writeTextToOutput('console','Moving to \'' + newRoom.name + '\'.');
-		writeTextToOutput('console',newRoom.description);
-		player.currentRoom = newRoom;
+		if(room3TO4(newRoom)) {
+			writeTextToOutput('console','Moving to \'' + newRoom.name + '\'.');
+			writeTextToOutput('console',newRoom.description);
+			player.currentRoom = newRoom;
+		}
 	}
 	else {
 		writeTextToOutput('console','\'' + dRoom + '\' is not adjacent to \'' + player.currentRoom.name + '\'.');
@@ -205,14 +219,13 @@ $( document ).ready(function() {
 	objects.push(bed);
 	objects.push(terminal);
 	objects.push(icebreaker);
-	/*parseCommand('take terminal');
+	objects.push(drawers);
 	parseCommand('move terminal');
-	parseCommand('inventory');
-	parseCommand('take terminaldwad');
 	parseCommand('move cyberspace');
 	parseCommand('look icebreaker');
 	parseCommand('take icebreaker');
-	parseCommand('inventory');*/
+	parseCommand('inventory');
+	parseCommand('move vault');
 });
 
 
