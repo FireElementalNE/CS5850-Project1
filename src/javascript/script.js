@@ -6,7 +6,43 @@ var counter = 0;
 
 objects = new Array();
 
+var timer = 300;
+var startTimer = false;
+
+var firstEnterRoom3 = true;
 var commonCommands = ["adjacent"]
+var firstJackin = true;
+
+var helpString = "The basic commands are: look, move, take, adjacent, time, and inventory. Words that are <span style=\"color:#8797F5\">blue</span>" +
+				 " are rooms that can be 'moved' to. to move to them simply type 'move roomname'. 'adjacent' lists the rooms that are" +
+				 " adjacent to the current room. You can only move to adjacent rooms. Objects in these rooms are marked in <span style=\"color:#F5F587\">yellow</span>" + 
+				 " they can always be looked at by using 'look objectname', you can try to pick them up by doing 'take objectname' not all objects can be" +
+				 " picked up. 'inventory' lists the items in your inventory. 'time' shows the time left on the timer after you jackin to cyberspace." +
+				 " help shows this screen.";
+
+// list 
+
+function ListAdj() {
+	actualAdjRooms = player.currentRoom.adjacentRooms;
+	for(var i = 0; i < actualAdjRooms.length; i++) {
+		var outString = "<span style=\"color:#8797F5\">" + findRoom(actualAdjRooms[i].id).name + "</span> is adjacent to <span style=\"color:#8797F5\">" +
+						player.currentRoom.name + "</span>";
+		writeTextToOutput('console',outString);
+	}
+}
+
+function ListInv() {
+	if(player.inventory.length == 0) {
+		writeTextToOutput('console',"Your inventory is empty.");
+	}
+	else {
+		for(var i = 0; i < player.inventory.length; i++) {
+			writeTextToOutput('console', player.inventory[i].id + " is in your inventory");
+		}
+	}
+}
+
+// write function 
 
 function writeTextToOutput(type,msg) {
 	var writerClass = undefined;
@@ -20,23 +56,13 @@ function writeTextToOutput(type,msg) {
 		writerClass = 'useroutput';
 	}
 	var el = "<span class=\"" + writerClass + "\">" + writer + "</span>" + 
-				"<span>" + msg + "</span>" + 
+				"<span class=\"textcolor\">" + msg + "</span>" + 
 				"<pre>" + "\n" + "</pre>";
 	$('#chatArea').append(el);
+	$('#chatArea').scrollTop( $('#chatArea').get(0).scrollHeight );
 }
 
-function chomp(str) {
-	return str.replace(/(\n|\r|\s)+$/, '');
-}
-
-function findObject(id0) {
-	for(var i = 0; i < objects.length; i++) {
-		if(inArray(id0,objects[i].names) && objects[i].location == player.currentRoom.id) {
-			return objects[i];
-		}
-	}
-	return null;
-}
+// Object functions
 
 function comInObjects(id0) {
 	for(var i = 0; i < objects.length; i++) {
@@ -45,24 +71,6 @@ function comInObjects(id0) {
 		}
 	}
 	return false;
-}
-
-function inArray(target,arr) {
-	for(var i = 0; i < arr.length; i++) {
-		if(target == arr[i]) {
-			return true;
-		}
-	}
-	return false;
-}
-
-function getFromArray(target,arr) {
-	for(var i = 0; i < arr.length; i++) {
-		if(target == arr[i]) {
-			return arr[i];
-		}
-	}
-	return null;
 }
 
 function takeObject(com) {
@@ -74,8 +82,13 @@ function takeObject(com) {
 	else if(obj != null) {
 		var realobj = findObject(obj);
 		if(realobj.cantake) {
-			writeTextToOutput('console',"you pick up the " + realobj.id);
-			player.inventory.push(realobj);
+			if(realobj.id == "target") {
+				takeTarget();
+			}
+			else {
+				writeTextToOutput('console',"you pick up the " + realobj.id);
+				player.inventory.push(realobj);
+			}
 		}
 		else {
 			var realobj = findObject(obj);
@@ -84,6 +97,17 @@ function takeObject(com) {
 	}
 	
 }
+
+function findObject(id0) {
+	for(var i = 0; i < objects.length; i++) {
+		if(inArray(id0,objects[i].names) && objects[i].location == player.currentRoom.id) {
+			return objects[i];
+		}
+	}
+	return null;
+}
+
+
 function parseCommand(com) {
 
 	moveRe = /move\s(\w+)/i;
@@ -91,23 +115,53 @@ function parseCommand(com) {
 	invRe = /inventory/i;
 	takeRe = /take\s(\w+)/i;
 	lookRe = /look\s(\w+)/i;
-	switch(true) {
-		case moveRe.test(com): 
-			move(moveRe.exec(com)[1]);
-			break;
-		case adjRe.test(com): 
-			ListAdj();
-			break;
-		case invRe.test(com):
-			ListInv();
-			break;
-		case lookRe.test(com):
-			writeTextToOutput('console',findObject(lookRe.exec(com)[1]).objfunction());
-		case comInObjects(com) && !takeRe.test(com):
-			break;
-		case takeRe.test(com):
-			takeObject(takeRe.exec(com)[1]);
-			break;
+	roomRe = /room/i;
+	timeRe = /time/i;
+	helpRe = /help/i;
+	if(com != '') {
+		switch(true) {
+			case moveRe.test(com): 
+				move(moveRe.exec(com)[1]);
+				break;
+			case adjRe.test(com): 
+				ListAdj();
+				break;
+			case invRe.test(com):
+				ListInv();
+				break;
+			case lookRe.test(com):
+				var tobj = findObject(lookRe.exec(com)[1]);
+				if(tobj != null) {
+					writeTextToOutput('console',tobj.objfunction());
+				}
+				else {
+					writeTextToOutput('console',"There is no object " + lookRe.exec(com)[1] + " in the room.");	
+				}
+			case comInObjects(com) && !takeRe.test(com):
+				break;
+			case takeRe.test(com):
+				takeObject(takeRe.exec(com)[1]);
+				break;
+			case roomRe.test(com):
+				writeTextToOutput('console',player.currentRoom.description);	
+				break;
+			case timeRe.test(com):
+				if(startTimer) {
+					writeTextToOutput('console','You have ' + timer + ' seconds left.');
+				}
+				else {
+					writeTextToOutput('console','Timer hasnt started');	
+				}
+				break;
+			case helpRe.test(com):
+				writeTextToOutput('console',helpString);
+				break;	
+			default:
+				writeTextToOutput('console','Invalid command ' + com + '.');	
+		}
+	}
+	else {
+		writeTextToOutput('console','zzzZZZzzzZZZ...');
 	}
 }
 
@@ -128,49 +182,37 @@ function findRoom(id) {
 	return null;
 }
 
-function ListAdj() {
-	actualAdjRooms = player.currentRoom.adjacentRooms;
-	for(var i = 0; i < actualAdjRooms.length; i++) {
-		var outString = findRoom(actualAdjRooms[i].id).name + " is adjacent to " +
-						player.currentRoom.name;
-		writeTextToOutput('console',outString);
-	}
-}
+// room fixers
 
-function ListInv() {
-	if(player.inventory.length == 0) {
-		writeTextToOutput('console',"Your inventory is empty.");
-	}
-	else {
-		for(var i = 0; i < player.inventory.length; i++) {
-			writeTextToOutput('console', player.inventory[i].id + " is in your inventory");
-		}
-	}
-}
-
-function findRoom(roomid) {
-	for(var i = 0; i < world['rooms'].length; i++) {
-		if(world['rooms'][i].id == roomid) {
-			return world['rooms'][i];
-		}
-	}
-	return null;
-} 
-
-function log(msg) {
-	console.log(msg);
+function fixRoom3() {
+	newDescription = "Back in the lobby you see that the icebreaker has worked! you can now move in and out on the vault as needed.";
+	world.rooms[2].description = newDescription;
 }
 
 function room3TO4(newRoom) {
 	if(newRoom.id == 'room4') {
 		if(inArray(icebreaker,player.inventory)) {
-			writeTextToOutput('console','You use the icebreaker to enter the vault!');			
+			if(firstEnterRoom3) {
+				writeTextToOutput('console','You use the icebreaker to enter the vault!');
+				firstEnterRoom3 = false;
+			}
+			fixRoom3();
 			return true;
 		}
-		writeTextToOutput('console','You can\'t get through that ice! where that icebreaker?');			
+		writeTextToOutput('console','You can\'t get through that ice! wheres that icebreaker?');			
 		return false;
 	}
 	return true;
+}
+
+function takeTarget() {
+	writeTextToOutput('console',"You attempt to pick up your target, It prompts for an empolyee identification.");
+	if(inArray(identifications,player.inventory)) {
+		writeTextToOutput('console',"You provide it with the identification you found in the empolyee lounge. It sputters out the keys! You WIN.");
+	}
+	else {
+		writeTextToOutput('console',"You cant fake those ids... maybge one is lying around somewhere....");	
+	}
 }
 
 function move(dRoom) {
@@ -186,8 +228,12 @@ function move(dRoom) {
 	}
 	if(found) {
 		var newRoom = findRoom(tmp);
+		if(firstJackin && newRoom.id == "room3" && player.currentRoom.id == "room2") {
+			startTimer = true;
+			firstJackin = false;
+		}
 		if(room3TO4(newRoom)) {
-			writeTextToOutput('console','Moving to \'' + newRoom.name + '\'.');
+			//writeTextToOutput('console','Moving to \'' + newRoom.name + '\'.');
 			writeTextToOutput('console',newRoom.description);
 			player.currentRoom = newRoom;
 		}
@@ -197,23 +243,14 @@ function move(dRoom) {
 	}
 }
 
-document.onkeydown = function (evt) {
-  var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
-  if (keyCode == 13) {
-  	 $("#sendButton").click();
-    // For Enter.
-    // Your function here.
-  }
-  else {
-    return true;
-  }
-};
+
 
 $( document ).ready(function() {
 	player = {
 		"inventory": [],
 		"currentRoom":  world.rooms[0]
 	}
+	writeTextToOutput('console',helpString)
 	writeTextToOutput('console',player.currentRoom.description);
 	objects.push(clock);
 	objects.push(bed);
@@ -221,17 +258,18 @@ $( document ).ready(function() {
 	objects.push(icebreaker);
 	objects.push(drawers);
 	objects.push(scanner);
-	parseCommand('move terminal');
-	parseCommand('move cyberspace');
-	parseCommand('look icebreaker');
-	parseCommand('take icebreaker');
-	parseCommand('inventory');
-	parseCommand('move vault');
-	parseCommand('move backroom');
-	parseCommand('look scanner');
+	objects.push(icewall);
+	objects.push(identifications);
+	objects.push(picture);
+	objects.push(hitscan);
+	objects.push(diagram);
+	objects.push(target);
+	
 });
 
 
 setInterval(function(){      
-      counter++;
+      if(startTimer) {
+      	timer--;
+      }
 },500);
