@@ -1,4 +1,4 @@
-log("Loaded");
+//log("Loaded");
 
 var player; 
 var MAXTIME = 300;
