@@ -6,10 +6,6 @@ var counter = 0;
 
 objects = new Array();
 
-var index = 0;
-
-var prevCommands = new Array();
-
 var timer = MAXTIME;
 var startTimer = false;
 var endTimer = false;
@@ -281,7 +277,7 @@ setInterval(function(){
 	  	$('#chatMessege').prop('disabled','true')
 	  	endTimer = true;
 	  }     
-      if(timer % 100 == 0 && time != MAXTIME && !endTimer) {
+      if(timer % 100 == 0 && timer != MAXTIME && !endTimer) {
       	writeTextToOutput('console','ALERT: you only have ' + timer + 'seconds left.')
       }
       if(startTimer && !endTimer) {
