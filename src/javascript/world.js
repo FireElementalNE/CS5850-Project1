@@ -57,7 +57,7 @@ var world = {
 				name: "vault",
 				description: "You find yorself in a giant room full of <span style=\"color:#F5F587\">drawers</span>, these drawers correspond to " +
 							" basic bank accounts, while these have money they are not what you are looking for. " +
-							" There is a door to a <span style=\"color:#8797F5\">backroom</span>, no ICE, seems suspicious. Annother un-ICEd door also leads to the <span style=\"color:#8797F5\">left</span>",
+							" There is a door to a <span style=\"color:#8797F5\">backroom</span>, no ICE, seems suspicious. Annother un-ICEd door also leads to a <span style=\"color:#8797F5\">hallway</span>",
 				objects: ["drawers"],
 				adjacentRooms: [
 							{ 
@@ -79,7 +79,7 @@ var world = {
 				name: "backroom",
 				description: "You knew it looked to good to be true, upon entering the room you are presented, with" +
 							" a military grade <span style=\"color:#F5F587\">scanner</span> module that you must use to continue... how the hell are you going to" +
-							" get past that?",
+							" get past that? behind the  scanner is the <span style=\"color:#8797F5\">deposit</span> room",
 				objects: ["scanner"],
 				adjacentRooms: [
 							{ 
