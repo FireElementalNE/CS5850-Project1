@@ -6,7 +6,7 @@ var world = {
 			{
 				id: "room1",
 				name: "bedroom",
-				description: "You are your in <span style=\"color:#8797F5\">bedroom</span>. It consists of a terminal, and your <span style=\"color:#F5F587\">bed</span>. " + 
+				description: "You are your in <span style=\"color:#8797F5\">bedroom</span>. It consists of a <span style=\"color:#8797F5\">terminal</span>, and your <span style=\"color:#F5F587\">bed</span>. " + 
 							 "Next to the bed an alarm <span style=\"color:#F5F587\">clock</span> is blinking. a Note on your hand in sharpie" + 
 							 " reminds you that today is the day to hack the bank.",
 				objects: ["terminal","bed","clock"],

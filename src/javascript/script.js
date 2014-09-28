@@ -1,13 +1,18 @@
 log("Loaded");
 
 var player; 
-
+var MAXTIME = 300;
 var counter = 0;
 
 objects = new Array();
 
-var timer = 300;
+var index = 0;
+
+var prevCommands = new Array();
+
+var timer = MAXTIME;
 var startTimer = false;
+var endTimer = false;
 
 var firstEnterRoom3 = true;
 var commonCommands = ["adjacent"]
@@ -209,6 +214,8 @@ function takeTarget() {
 	writeTextToOutput('console',"You attempt to pick up your target, It prompts for an empolyee identification.");
 	if(inArray(identifications,player.inventory)) {
 		writeTextToOutput('console',"You provide it with the identification you found in the empolyee lounge. It sputters out the keys! You WIN.");
+		endTimer = true;
+		$('#chatMessege').prop('disabled','true');
 	}
 	else {
 		writeTextToOutput('console',"You cant fake those ids... maybge one is lying around somewhere....");	
@@ -268,8 +275,16 @@ $( document ).ready(function() {
 });
 
 
-setInterval(function(){      
-      if(startTimer) {
+setInterval(function(){
+	  if(timer <= 0 && !endTimer) {
+	  	writeTextToOutput('console','Time has run out, the bank fully scanned you, prepare for the police to come knocking... GAME OVER.');
+	  	$('#chatMessege').prop('disabled','true')
+	  	endTimer = true;
+	  }     
+      if(timer % 100 == 0 && time != MAXTIME && !endTimer) {
+      	writeTextToOutput('console','ALERT: you only have ' + timer + 'seconds left.')
+      }
+      if(startTimer && !endTimer) {
       	timer--;
       }
-},500);
+},1000);
