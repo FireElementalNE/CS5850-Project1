@@ -1,5 +1,7 @@
 // rooms <span style=\"color:#8797F5\"></span>
 // objects <span style=\"color:#F5F587\"></span>
+
+// The world object this holds all of the rooms that the player can go to
 var world = {
 	"rooms":
 		[

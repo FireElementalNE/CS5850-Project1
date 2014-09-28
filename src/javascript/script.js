@@ -1,29 +1,21 @@
-//log("Loaded");
-
-var player; 
-var MAXTIME = 300;
+var player; // player object
+var MAXTIME = 300; // for the timer, tim player has left
 var counter = 0;
-
-objects = new Array();
-
+objects = new Array(); // the array of objects
 var timer = MAXTIME;
-var startTimer = false;
-var endTimer = false;
-
-var firstEnterRoom3 = true;
-var commonCommands = ["adjacent"]
-var firstJackin = true;
-
+var startTimer = false; // start the timer
+var endTimer = false; // end the timer
+var firstEnterRoom3 = true; // rewrite the string for room 3
+var firstJackin = true; // start the timer
+// for the help messege that is printed at the begining of the game
 var helpString = "The basic commands are: look, move, take, adjacent, time, and inventory. Words that are <span style=\"color:#8797F5\">blue</span>" +
 				 " are rooms that can be 'moved' to. to move to them simply type 'move roomname'. 'adjacent' lists the rooms that are" +
 				 " adjacent to the current room. You can only move to adjacent rooms. Objects in these rooms are marked in <span style=\"color:#F5F587\">yellow</span>" + 
 				 " they can always be looked at by using 'look objectname', you can try to pick them up by doing 'take objectname' not all objects can be" +
 				 " picked up. 'inventory' lists the items in your inventory. 'time' shows the time left on the timer after you jackin to cyberspace." +
 				 " help shows this screen.";
-
-// list 
-
-function ListAdj() {
+// list all the adjacent rooms to the platers current room
+function ListAdj() { 
 	actualAdjRooms = player.currentRoom.adjacentRooms;
 	for(var i = 0; i < actualAdjRooms.length; i++) {
 		var outString = "<span style=\"color:#8797F5\">" + findRoom(actualAdjRooms[i].id).name + "</span> is adjacent to <span style=\"color:#8797F5\">" +
@@ -31,8 +23,8 @@ function ListAdj() {
 		writeTextToOutput('console',outString);
 	}
 }
-
-function ListInv() {
+// list all of the inventory items
+function ListInv() { 
 	if(player.inventory.length == 0) {
 		writeTextToOutput('console',"Your inventory is empty.");
 	}
@@ -44,15 +36,15 @@ function ListInv() {
 }
 
 // write function 
-
-function writeTextToOutput(type,msg) {
+// print somethign to the div
+function writeTextToOutput(type,msg) { 
 	var writerClass = undefined;
 	var writer = undefined;
-	if (type == 'console') {
+	if (type == 'console') { // mostly used
 		writer = 'Console:';
 		writerClass = 'consoleoutput';
 	}
-	else if(type == 'user') {
+	else if(type == 'user') { // for echo
 		writer = 'You:';
 		writerClass = 'useroutput';
 	}
@@ -64,7 +56,7 @@ function writeTextToOutput(type,msg) {
 }
 
 // Object functions
-
+// check if passed the objects where in the commands
 function comInObjects(id0) {
 	for(var i = 0; i < objects.length; i++) {
 		if(inArray(id0,objects[i].names) && objects[i].location == player.currentRoom.id) {
@@ -73,7 +65,7 @@ function comInObjects(id0) {
 	}
 	return false;
 }
-
+// take object and put it in the inventory
 function takeObject(com) {
 	roomObjs = player.currentRoom.objects;
 	var obj = getFromArray(com.toLowerCase(),roomObjs);
@@ -82,7 +74,7 @@ function takeObject(com) {
 	}
 	else if(obj != null) {
 		var realobj = findObject(obj);
-		if(realobj.cantake) {
+		if(realobj.cantake && !inArray(realobj,player.inventory) ) {
 			if(realobj.id == "target") {
 				takeTarget();
 			}
@@ -98,7 +90,7 @@ function takeObject(com) {
 	}
 	
 }
-
+// find objects in the object array
 function findObject(id0) {
 	for(var i = 0; i < objects.length; i++) {
 		if(inArray(id0,objects[i].names) && objects[i].location == player.currentRoom.id) {
@@ -107,10 +99,8 @@ function findObject(id0) {
 	}
 	return null;
 }
-
-
+// parse the passed command
 function parseCommand(com) {
-
 	moveRe = /move\s(\w+)/i;
 	adjRe = /adjacent/i;
 	invRe = /inventory/i;
@@ -165,7 +155,7 @@ function parseCommand(com) {
 		writeTextToOutput('console','zzzZZZzzzZZZ...');
 	}
 }
-
+// submit the command to the user passed
 function submitUserCommand() {
 	var data = $("#chatMessege").val();
 	$("#chatMessege").val("");
@@ -182,14 +172,12 @@ function findRoom(id) {
 	}
 	return null;
 }
-
-// room fixers
-
+// fix room 3 when you go to it. Rewrite the description.
 function fixRoom3() {
 	newDescription = "Back in the lobby you see that the icebreaker has worked! you can now move in and out on the vault as needed.";
 	world.rooms[2].description = newDescription;
 }
-
+// test if the user has the icebreaker
 function room3TO4(newRoom) {
 	if(newRoom.id == 'room4') {
 		if(inArray(icebreaker,player.inventory)) {
@@ -205,7 +193,7 @@ function room3TO4(newRoom) {
 	}
 	return true;
 }
-
+// END THE GAME WAHOO
 function takeTarget() {
 	writeTextToOutput('console',"You attempt to pick up your target, It prompts for an empolyee identification.");
 	if(inArray(identifications,player.inventory)) {
@@ -217,7 +205,7 @@ function takeTarget() {
 		writeTextToOutput('console',"You cant fake those ids... maybge one is lying around somewhere....");	
 	}
 }
-
+// move from one room to the other
 function move(dRoom) {
 	var found = false;
 	var tmp = undefined;
@@ -236,7 +224,6 @@ function move(dRoom) {
 			firstJackin = false;
 		}
 		if(room3TO4(newRoom)) {
-			//writeTextToOutput('console','Moving to \'' + newRoom.name + '\'.');
 			writeTextToOutput('console',newRoom.description);
 			player.currentRoom = newRoom;
 		}
@@ -245,9 +232,7 @@ function move(dRoom) {
 		writeTextToOutput('console','\'' + dRoom + '\' is not adjacent to \'' + player.currentRoom.name + '\'.');
 	}
 }
-
-
-
+// initialize everything
 $( document ).ready(function() {
 	player = {
 		"inventory": [],
@@ -269,8 +254,7 @@ $( document ).ready(function() {
 	objects.push(target);
 	
 });
-
-
+// the gameloop, pretty simple but effective
 setInterval(function(){
 	  if(timer <= 0 && !endTimer) {
 	  	writeTextToOutput('console','Time has run out, the bank fully scanned you, prepare for the police to come knocking... GAME OVER.');

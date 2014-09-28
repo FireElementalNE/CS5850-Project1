@@ -1,3 +1,7 @@
+
+// This file holds all of the objects, the format is fairly simple and easy
+// all of these objects are added to an array later
+
 var clock = {
 	id: "clock",
 	location:"room1",
